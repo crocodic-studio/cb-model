@@ -1,0 +1,14 @@
+<?php
+namespace App\CBModels;
+
+use DB;
+use Crocodicstudio\Cbmodel\Core\Model;
+
+class [className] extends Model
+{
+    public static $tableName = "[tableName]";
+
+    [properties]
+
+    [getterSetter]
+}
