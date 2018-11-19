@@ -27,9 +27,15 @@ class Model
                     if (starts_with($key, 'id_')) {
                         $relationTable = str_replace('id_', '', $key);
                         $methodName = camel_case('set ' . $relationTable);
+                        if(!method_exists($this, $methodName)) {
+                            $methodName = camel_case("set ".$key);
+                        }
                     } elseif (ends_with($key, '_id')) {
                         $relationTable = str_replace('_id', '', $key);
                         $methodName = camel_case('set ' . $relationTable);
+                        if(!method_exists($this, $methodName)) {
+                            $methodName = camel_case("set ".$key);
+                        }
                     } else {
                         $methodName = camel_case('set ' . $key);
                     }
@@ -314,9 +320,15 @@ class Model
                 if(starts_with($column, 'id_')) {
                     $relationName = str_replace('id_','',$column);
                     $methodName = camel_case('get '.$relationName);
+                    if(!method_exists($model, $methodName)) {
+                        $methodName = camel_case("get ".$column);
+                    }
                 }elseif (ends_with($column,'_id')) {
                     $relationName = str_replace('_id','',$column);
                     $methodName = camel_case('get '.$relationName);
+                    if(!method_exists($model, $methodName)) {
+                        $methodName = camel_case("get ".$column);
+                    }
                 }else{
                     $methodName = camel_case('get '.$column);
                 }
