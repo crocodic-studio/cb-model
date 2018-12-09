@@ -27,7 +27,7 @@
     "extra": {
       "laravel": {
         "providers": [
-          "Crocodicstudio\\CBModelServiceProvider"
+          "Crocodicstudio\\Cbmodel\\CBModelServiceProvider"
         ]
       }
     }
