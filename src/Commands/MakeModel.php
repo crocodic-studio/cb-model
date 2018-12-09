@@ -1,7 +1,7 @@
 <?php namespace Crocodicstudio\Cbmodel\Commands;
 
 use App;
-use Crocodicstudio\CbModel\Helpers\Helper;
+use Crocodicstudio\Cbmodel\Helpers\Helper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
 
