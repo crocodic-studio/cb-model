@@ -37,14 +37,22 @@ class MakeModel extends Command
             @mkdir($path,0755);
         }
 
+        $pathRepositories = app_path("CBRepositories");
+        if(!file_exists($pathRepositories)) {
+            @mkdir($pathRepositories, 0755);
+        }
+
         $template = file_get_contents(__DIR__.'/../Stubs/template.blade.php.stub');
+        $repoTemplate = file_get_contents(__DIR__.'/../Stubs/repo_template.blade.php.stub');
         $tableStudly = studly_case($table);
 
         //Assign Class name
         $template = str_replace('[className]',$tableStudly, $template);
+        $repoTemplate = str_replace('[className]', $tableStudly, $repoTemplate);
 
         //Assign Table Name
         $template = str_replace('[tableName]',$table, $template);
+        $repoTemplate = str_replace('[tableName]', $table, $repoTemplate);
 
         //Get PK
         $pk = Helper::findPrimaryKey($table);
@@ -106,7 +114,10 @@ class MakeModel extends Command
         }
 
         file_put_contents($path.'/'.$repoName.'.php', $template);
+        $this->info($repoName." cb model has been created!");
 
-        $this->info($repoName." model repository has been created!");
+        //create repository
+        file_put_contents($pathRepositories.'/'.$repoName.'Repository.php', $repoTemplate);
+        $this->info($repoName." repository has been created!");
     }
 }

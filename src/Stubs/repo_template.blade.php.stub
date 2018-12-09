@@ -1,0 +1,11 @@
+<?php
+namespace App\CBRepositories;
+
+use DB;
+use App\CBModels\[className]
+
+class [className]Repository extends [className]
+{
+    // TODO : Make you own query methods
+
+}
