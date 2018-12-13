@@ -6,14 +6,16 @@ use Illuminate\Support\Facades\DB;
 
 class Helper
 {
-    public static function findPrimaryKey($table)
+    public static function findPrimaryKey($table, $connection = null)
     {
         if(!$table)
         {
             return 'id';
         }
 
-        $pk = DB::getDoctrineSchemaManager()->listTableDetails($table)->getPrimaryKey();
+        $connection = $connection?:config("database.default");
+
+        $pk = DB::connection($connection)->getDoctrineSchemaManager()->listTableDetails($table)->getPrimaryKey();
         if(!$pk) {
             return null;
         }
