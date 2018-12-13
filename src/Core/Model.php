@@ -368,7 +368,7 @@ class Model
                     }
                 }
 
-                self::$lastInsertId = DB::table(static::$tableName)->where($pk,$model->$pkColumn)->insertGetId($data);
+                self::$lastInsertId = DB::table(static::$tableName)->where($pk,$model->{$pkColumn}())->insertGetId($data);
                 $pkValue = self::$lastInsertId;
             }
 
