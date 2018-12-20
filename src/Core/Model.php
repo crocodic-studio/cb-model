@@ -251,17 +251,17 @@ class Model
      */
     public static function findById($id)
     {
-        if($data = app("CBModelTemporary")->get(get_called_class(),"findById",$id)) {
-            return $data;
-        }
 
         self::init();
         self::$id = $id;
-        $row = new static(self::simpleQuery()->where(static::getPrimaryField(),$id)->first());
 
-        app("CBModelTemporary")->set(get_called_class(),"findById",$id,$row);
-
-        return $row;
+        if($data = app("CBModelTemporary")->getRepo(get_called_class(),"findById",$id)) {
+            return new static($data);
+        }else{
+            $data = self::simpleQuery()->where(static::getPrimaryField(),$id)->first();
+            app("CBModelTemporary")->setRepo(get_called_class(),"findById",$id,$data);
+            return new static($data);
+        }
     }
 
     public function toObject()
