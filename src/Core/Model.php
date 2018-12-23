@@ -255,11 +255,11 @@ class Model
         self::init();
         self::$id = $id;
 
-        if($data = app("CBModelTemporary")->getRepo(get_called_class(),"findById",$id)) {
+        if($data = app("CBModelTemporary")->get(get_called_class(),"findById",$id)) {
             return new static($data);
         }else{
             $data = self::simpleQuery()->where(static::getPrimaryField(),$id)->first();
-            app("CBModelTemporary")->setRepo(get_called_class(),"findById",$id,$data);
+            app("CBModelTemporary")->set(get_called_class(),"findById",$id,$data);
             return new static($data);
         }
     }
