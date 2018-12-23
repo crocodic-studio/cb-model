@@ -136,14 +136,16 @@ class Model
 
             if (ends_with($column, '_id')) {
                 $relationTable = str_replace('_id', '', $column);
-                $relationTablePK = Helper::findPrimaryKey($relationTable, static::$connection);
+               
                 if (Schema::hasTable($relationTable)) {
+		    $relationTablePK = Helper::findPrimaryKey($relationTable, static::$connection);
                     self::join($relationTable, $relationTablePK, '=', $tableName.'.'.$column);
                 }
             }elseif (starts_with($column, 'id_')) {
                 $relationTable = str_replace('id_', '', $column);
-                $relationTablePK = Helper::findPrimaryKey($relationTable, static::$connection);
+                
                 if (Schema::hasTable($relationTable)) {
+		    $relationTablePK = Helper::findPrimaryKey($relationTable, static::$connection);
                     self::join($relationTable, $relationTablePK, '=', $tableName.'.'.$column);
                 }
             }
