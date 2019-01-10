@@ -118,14 +118,24 @@ class MakeModel extends Command
         }
 
         file_put_contents($path.'/'.$repoName.'.php', $template);
-        $this->info($repoName." model has been created!");
+        if(file_exists($path.'/'.$repoName.'.php')) {
+            $this->info($repoName." model has been updated!");
+        }else{
+            $this->info($repoName." model has been created!");
+        }
 
         //create repository
-        file_put_contents($pathRepositories.'/'.$repoName.'Repository.php', $repoTemplate);
-        $this->info($repoName." repository has been created!");
+        if(!file_exists($pathRepositories.'/'.$repoName.'Repository.php')) {
+            file_put_contents($pathRepositories.'/'.$repoName.'Repository.php', $repoTemplate);
+            $this->info($repoName." repository has been created!");
+        }
+
 
         //create service
-        file_put_contents($pathServices.'/'.$repoName.'Service.php', $serviceTemplate);
-        $this->info($repoName.' service has been created!');
+        if(!file_exists($pathServices.'/'.$repoName.'Service.php')) {
+            file_put_contents($pathServices.'/'.$repoName.'Service.php', $serviceTemplate);
+            $this->info($repoName.' service has been created!');
+        }
+
     }
 }
