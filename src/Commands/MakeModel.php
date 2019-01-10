@@ -43,17 +43,25 @@ class MakeModel extends Command
             @mkdir($pathRepositories, 0755);
         }
 
+        $pathServices = app_path("CBServices");
+        if(!file_exists($pathServices)) {
+            @mkdir($pathServices, 0755);
+        }
+
         $template = file_get_contents(__DIR__.'/../Stubs/template.blade.php.stub');
         $repoTemplate = file_get_contents(__DIR__.'/../Stubs/repo_template.blade.php.stub');
+        $serviceTemplate = file_get_contents(__DIR__.'/../Stubs/service_template.blade.php.stub');
         $tableStudly = studly_case($table);
 
         //Assign Class name
         $template = str_replace('[className]',$tableStudly, $template);
         $repoTemplate = str_replace('[className]', $tableStudly, $repoTemplate);
+        $serviceTemplate = str_replace('[className]', $tableStudly, $repoTemplate);
 
         //Assign Table Name
         $template = str_replace('[tableName]',$table, $template);
         $repoTemplate = str_replace('[tableName]', $table, $repoTemplate);
+        $serviceTemplate = str_replace('[tableName]', $table, $serviceTemplate);
 
         //Assign Connection
         $template = str_replace('[connection]', $connection, $template);
@@ -110,10 +118,14 @@ class MakeModel extends Command
         }
 
         file_put_contents($path.'/'.$repoName.'.php', $template);
-        $this->info($repoName." cb model has been created!");
+        $this->info($repoName." model has been created!");
 
         //create repository
         file_put_contents($pathRepositories.'/'.$repoName.'Repository.php', $repoTemplate);
         $this->info($repoName." repository has been created!");
+
+        //create service
+        file_put_contents($pathServices.'/'.$repoName.'Service.php', $serviceTemplate);
+        $this->info($repoName.' service has been created!');
     }
 }

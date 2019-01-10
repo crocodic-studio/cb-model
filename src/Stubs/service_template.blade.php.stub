@@ -1,0 +1,11 @@
+<?php
+namespace App\CBServices;
+
+use DB;
+use App\CBRepositories\[className];
+
+class [className]Service
+{
+    // TODO : Make you own service method
+
+}
