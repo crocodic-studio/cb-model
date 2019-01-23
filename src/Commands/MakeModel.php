@@ -56,7 +56,7 @@ class MakeModel extends Command
         //Assign Class name
         $template = str_replace('[className]',$tableStudly, $template);
         $repoTemplate = str_replace('[className]', $tableStudly, $repoTemplate);
-        $serviceTemplate = str_replace('[className]', $tableStudly, $repoTemplate);
+        $serviceTemplate = str_replace('[className]', $tableStudly, $serviceTemplate);
 
         //Assign Table Name
         $template = str_replace('[tableName]',$table, $template);
