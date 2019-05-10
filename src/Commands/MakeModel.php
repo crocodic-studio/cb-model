@@ -32,18 +32,18 @@ class MakeModel extends Command
         $repoName = $this->argument('RepoName');
         $connection = $this->argument('connection')?:config("database.default");
 
-        $path = app_path('CBModels');
+        $path = app_path('Models');
 
         if(!file_exists($path)) {
             @mkdir($path,0755);
         }
 
-        $pathRepositories = app_path("CBRepositories");
+        $pathRepositories = app_path("Repositories");
         if(!file_exists($pathRepositories)) {
             @mkdir($pathRepositories, 0755);
         }
 
-        $pathServices = app_path("CBServices");
+        $pathServices = app_path("Services");
         if(!file_exists($pathServices)) {
             @mkdir($pathServices, 0755);
         }
@@ -74,8 +74,7 @@ class MakeModel extends Command
         $properties = "\n";
         foreach($columns as $column)
         {
-            $columnCamel = camel_case($column);
-            $properties .= "\tprivate \$".$columnCamel.";\n";
+            $properties .= "\tprivate \$".$column.";\n";
         }
         $template = str_replace('[properties]', $properties, $template);
 
@@ -97,16 +96,16 @@ class MakeModel extends Command
                 $gs .= "\t* @return ".$hintClassName."\n";
                 $gs .= "\t*/\n";
                 $gs .= "\tpublic function get".studly_case($column)."() {\n";
-                $gs .= "\t\treturn ".$hintClassName."::findById(\$this->".$columnCamel.");\n";
+                $gs .= "\t\treturn ".$hintClassName."::findById(\$this->".$column.");\n";
                 $gs .= "\t}\n\n";
             }else{
                 $gs .= "\tpublic function get".studly_case($column)."() {\n";
-                $gs .= "\t\treturn \$this->".$columnCamel.";\n";
+                $gs .= "\t\treturn \$this->".$column.";\n";
                 $gs .= "\t}\n\n";
             }
 
-            $gs .= "\tpublic function set".studly_case($column)."(\$".$columnCamel.") {\n";
-            $gs .= "\t\t\$this->".$columnCamel." = \$".$columnCamel.";\n";
+            $gs .= "\tpublic function set".studly_case($column)."(\$".$column.") {\n";
+            $gs .= "\t\t\$this->".$column." = \$".$column.";\n";
             $gs .= "\t}\n\n";
         }
         $template = str_replace('[getterSetter]', $gs, $template);

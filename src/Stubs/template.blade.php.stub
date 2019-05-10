@@ -1,5 +1,5 @@
 <?php
-namespace App\CBModels;
+namespace App\Models;
 
 use DB;
 use Crocodicstudio\Cbmodel\Core\Model;

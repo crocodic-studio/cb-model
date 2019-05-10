@@ -1,8 +1,8 @@
 <?php
-namespace App\CBServices;
+namespace App\Services;
 
 use DB;
-use App\CBRepositories\[className];
+use App\Repositories\[className];
 
 class [className]Service
 {

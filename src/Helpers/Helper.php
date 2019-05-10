@@ -8,11 +8,6 @@ class Helper
 {
     public static function findPrimaryKey($table, $connection = null)
     {
-        if(!$table)
-        {
-            return 'id';
-        }
-
         $connection = $connection?:config("database.default");
 
         $pk = DB::connection($connection)->getDoctrineSchemaManager()->listTableDetails($table)->getPrimaryKey();
