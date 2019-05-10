@@ -18,7 +18,7 @@ It will auto create a new file at ```/app/CBModels/Books.php``` with the followi
 
 ```php
 <?php
-namespace App\CBModels;
+namespace App\Models;
 
 use DB;
 use Crocodicstudio\Cbmodel\Core\Model;
@@ -70,7 +70,7 @@ Insert ```use App\CBModels\Books; ``` at top of your controller class name.
 <?php 
 namespace App\Http\Controllers;
 
-use App\CBModels\Books;
+use App\Models\Books;
 
 class FooController extends Controller {
     
@@ -122,7 +122,7 @@ Now we go back to the controller
 <?php 
 namespace App\Http\Controllers;
 
-use App\CBModels\Books;
+use App\Models\Books;
 
 class FooController extends Controller {
     
