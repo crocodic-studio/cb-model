@@ -12,7 +12,7 @@ class MakeModel extends Command
      *
      * @var string
      */
-    protected $signature = 'make:cbmodel {--table= : The table name} {--connection= : The connection database, default is mysql}';
+    protected $signature = 'make:cbmodel {--table=ALL : The table name, the default is all table} {--connection=mysql : The connection database, default is mysql}';
 
     /**
      * The console command description.
@@ -26,12 +26,24 @@ class MakeModel extends Command
      *
      * @return mixed
      */
+
     public function handle()
     {
         $table = $this->option('table');
         $repoName = null;
-        $connection = $this->option('connection')?:config("database.default");
+        $connection = $this->option('connection');
 
+        if($table == "ALL") {
+            $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+            foreach($tables as $table) {
+                $this->generateByTable($table, $connection, $repoName);
+            }
+        }else{
+            $this->generateByTable($table, $connection, $repoName);
+        }
+    }
+
+    private function generateByTable($table, $connection, $repoName) {
         $path = app_path('Models');
 
         if(!file_exists($path)) {
@@ -105,15 +117,15 @@ class MakeModel extends Command
                 $gs .= "\t\treturn ".$hintClassName."::findById(\$this->".$column.");\n";
                 $gs .= "\t}\n\n";
             }else{
-            if($column != $pk) {
-                $gs .= "\tpublic function findAllBy".studly_case($column)."(\$value) {\n";
-                $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
-                $gs .= "\t}\n\n";
+                if($column != $pk) {
+                    $gs .= "\tpublic function findAllBy".studly_case($column)."(\$value) {\n";
+                    $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
+                    $gs .= "\t}\n\n";
 
-                $gs .= "\tpublic function findBy".studly_case($column)."(\$value) {\n";
-                $gs .= "\t\treturn new static(static::findBy('".$column."',\$value));\n";
-                $gs .= "\t}\n\n";
-            }
+                    $gs .= "\tpublic function findBy".studly_case($column)."(\$value) {\n";
+                    $gs .= "\t\treturn new static(static::findBy('".$column."',\$value));\n";
+                    $gs .= "\t}\n\n";
+                }
 
                 $gs .= "\tpublic function get".studly_case($column)."() {\n";
                 $gs .= "\t\treturn \$this->".$column.";\n";
@@ -151,6 +163,5 @@ class MakeModel extends Command
             file_put_contents($pathServices.'/'.$repoName.'Service.php', $serviceTemplate);
             $this->info($repoName.' service has been created!');
         }
-
     }
 }
