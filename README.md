@@ -5,7 +5,9 @@ An alternative about laravel eloquent
 ``composer require crocodicstudio/cbmodel``
 
 ### 1. Create a model from existing table
-``php artisan cbmodel:make books``
+``php artisan make:cbmodel --table={the table name}``
+
+If you want to generate All your table you can ignore the <code>--table</code> option.
 
 I assume that you have a ```books``` table with the structure like bellow:
 ```
