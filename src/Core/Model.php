@@ -266,6 +266,23 @@ class Model
         }
     }
 
+    public static function findBy($field, $value)
+    {
+        self::init();
+        $pk = static::getPrimaryKey();
+
+        if($data = app("CBModelTemporary")->get(get_called_class(),"findBy",$value)) {
+            self::$id = $data->{$pk};
+            return new static($data);
+        }else{
+
+            $data = self::simpleQuery()->where($field,$value)->first();
+            self::$id = $data->{$pk};
+            app("CBModelTemporary")->set(get_called_class(),"findBy",$value,$data);
+            return new static($data);
+        }
+    }
+
     public function toObject()
     {
         if(isset(self::$rowTemp)) {

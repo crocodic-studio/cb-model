@@ -12,7 +12,7 @@ class MakeModel extends Command
      *
      * @var string
      */
-    protected $signature = 'cbmodel:make {table} {RepoName?} {connection?}';
+    protected $signature = 'make:cbmodel {--table= : The table name} {--connection= : The connection database, default is mysql}';
 
     /**
      * The console command description.
@@ -28,9 +28,9 @@ class MakeModel extends Command
      */
     public function handle()
     {
-        $table = $this->argument('table');
-        $repoName = $this->argument('RepoName');
-        $connection = $this->argument('connection')?:config("database.default");
+        $table = $this->option('table');
+        $repoName = null;
+        $connection = $this->option('connection')?:config("database.default");
 
         $path = app_path('Models');
 
@@ -89,9 +89,15 @@ class MakeModel extends Command
                 $hintClassName = studly_case(str_replace('id_','',$column));
             }
 
-            $columnCamel = camel_case($column);
+            if(!class_exists("\\App\Models\\".$hintClassName)) {
+                $hintClassName = null;
+            }
 
             if($hintClassName) {
+                $gs .= "\tpublic function findAllBy".studly_case($column)."(\$value) {\n";
+                $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
+                $gs .= "\t}\n\n";
+
                 $gs .= "\t/**\n";
                 $gs .= "\t* @return ".$hintClassName."\n";
                 $gs .= "\t*/\n";
@@ -99,6 +105,16 @@ class MakeModel extends Command
                 $gs .= "\t\treturn ".$hintClassName."::findById(\$this->".$column.");\n";
                 $gs .= "\t}\n\n";
             }else{
+            if($column != $pk) {
+                $gs .= "\tpublic function findAllBy".studly_case($column)."(\$value) {\n";
+                $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
+                $gs .= "\t}\n\n";
+
+                $gs .= "\tpublic function findBy".studly_case($column)."(\$value) {\n";
+                $gs .= "\t\treturn new static(static::findBy('".$column."',\$value));\n";
+                $gs .= "\t}\n\n";
+            }
+
                 $gs .= "\tpublic function get".studly_case($column)."() {\n";
                 $gs .= "\t\treturn \$this->".$column.";\n";
                 $gs .= "\t}\n\n";
