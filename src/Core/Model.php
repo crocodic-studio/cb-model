@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Crocodicstudio\Cbmodel\Helpers\Helper;
+use Illuminate\Support\Str;
 
 class Model
 {
@@ -25,7 +26,7 @@ class Model
         if($row) {
             foreach ($row as $key => $val) {
                 if ($key) {
-                    $methodName = camel_case('set ' . $key);
+                    $methodName = Str::camel('set ' . $key);
                     if(method_exists($this, $methodName)) {
                         $this->$methodName($val);
                     }
@@ -59,7 +60,7 @@ class Model
         if (count(self::$relations)) {
 
             foreach (self::$relations as $relate) {
-                $tableFrom = (str_contains($relate['tableFrom'], ' as ')) ? str_after($relate['tableFrom'], ' as ') : $relate['tableFrom'];
+                $tableFrom = (Str::contains($relate['tableFrom'], ' as ')) ? Str::after($relate['tableFrom'], ' as ') : $relate['tableFrom'];
                 self::$tableQuery['query']->leftjoin($relate['tableFrom'], $tableFrom . '.' . $relate['tableFromPK'], $relate['operator'], $relate['dest']);
 
                 $columns = DB::connection(static::$connection)->getSchemaBuilder()->getColumnListing($relate['tableFrom']);
@@ -134,14 +135,14 @@ class Model
         foreach ($columns as $column) {
             if (in_array($column, static::$joinException)) continue;
 
-            if (ends_with($column, '_id')) {
+            if (Str::endsWith($column, '_id')) {
                 $relationTable = str_replace('_id', '', $column);
                
                 if (Schema::hasTable($relationTable)) {
 		    $relationTablePK = Helper::findPrimaryKey($relationTable, static::$connection);
                     self::join($relationTable, $relationTablePK, '=', $tableName.'.'.$column);
                 }
-            }elseif (starts_with($column, 'id_')) {
+            }elseif (Str::startsWith($column, 'id_')) {
                 $relationTable = str_replace('id_', '', $column);
                 
                 if (Schema::hasTable($relationTable)) {
@@ -319,25 +320,24 @@ class Model
             $model = $this;
             $pk = Helper::findPrimaryKey(static::$tableName, static::$connection);
             $columns = DB::connection(static::$connection)->getSchemaBuilder()->getColumnListing(static::$tableName);
-            $pkColumn = camel_case('get '.$pk);
 
             $data = [];
             foreach($columns as $column)
             {
-                $methodName = camel_case('get '.$column);
-
+                $methodName = Str::camel('get '.$column);
                 if(method_exists($model, $methodName)) {
                     $getAttr = $model->{$methodName}();
                     if(is_object($getAttr)) {
                         if(method_exists($getAttr, "getPrimaryKey")) {
-                            $pkMethod = camel_case('get '.$getAttr->getPrimaryKey());
+                            $pkMethod = Str::camel('get '.$getAttr->getPrimaryKey());
                             $data[$column] = $getAttr->{$pkMethod}();
+                        }else{
+                            $data[$column] = $getAttr;
                         }
                     }else{
                         $data[$column] = $getAttr;
                     }
                 }
-
             }
 
             if(Schema::hasColumn(static::$tableName,'updated_at')) {
@@ -347,8 +347,6 @@ class Model
             if(Schema::hasColumn(static::$tableName,'created_at')) {
                 $data['created_at'] = date('Y-m-d H:i:s');
             }
-
-            $pkValue = 0;
 
             if(isset($data[$pk])) {
                 $pkValue = $data[$pk];
@@ -361,14 +359,14 @@ class Model
                     }
                 }
 
-                self::$lastInsertId = DB::connection(static::$connection)->table(static::$tableName)
-                    ->where($pk,$this->{$pkColumn}())
+                self::$lastInsertId = DB::connection(static::$connection)
+                    ->table(static::$tableName)
                     ->insertGetId($data);
                 $pkValue = self::$lastInsertId;
             }
 
             //set to setId()
-            $pkSetMethod = camel_case('set '.$pk);
+            $pkSetMethod = Str::camel('set '.$pk);
             $this->{$pkSetMethod}( $pkValue );
 
             return $pkValue;
