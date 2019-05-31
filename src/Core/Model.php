@@ -278,8 +278,10 @@ class Model
         }else{
 
             $data = self::simpleQuery()->where($field,$value)->first();
-            self::$id = $data->{$pk};
-            app("CBModelTemporary")->set(get_called_class(),"findBy",$value,$data);
+            if($data) {
+                self::$id = $data->{$pk};
+                app("CBModelTemporary")->set(get_called_class(),"findBy",$value,$data);
+            }
             return new static($data);
         }
     }
