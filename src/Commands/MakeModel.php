@@ -106,7 +106,7 @@ class MakeModel extends Command
             }
 
             if($hintClassName) {
-                $gs .= "\tpublic function findAllBy".studly_case($column)."(\$value) {\n";
+                $gs .= "\tpublic static function findAllBy".studly_case($column)."(\$value) {\n";
                 $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
                 $gs .= "\t}\n\n";
 
@@ -118,11 +118,11 @@ class MakeModel extends Command
                 $gs .= "\t}\n\n";
             }else{
                 if($column != $pk) {
-                    $gs .= "\tpublic function findAllBy".studly_case($column)."(\$value) {\n";
+                    $gs .= "\tpublic static function findAllBy".studly_case($column)."(\$value) {\n";
                     $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
                     $gs .= "\t}\n\n";
 
-                    $gs .= "\tpublic function findBy".studly_case($column)."(\$value) {\n";
+                    $gs .= "\tpublic static function findBy".studly_case($column)."(\$value) {\n";
                     $gs .= "\t\treturn new static(static::findBy('".$column."',\$value));\n";
                     $gs .= "\t}\n\n";
                 }
