@@ -123,7 +123,7 @@ class MakeModel extends Command
                     $gs .= "\t}\n\n";
 
                     $gs .= "\tpublic static function findBy".studly_case($column)."(\$value) {\n";
-                    $gs .= "\t\treturn new static(static::findBy('".$column."',\$value));\n";
+                    $gs .= "\t\treturn static::findBy('".$column."',\$value);\n";
                     $gs .= "\t}\n\n";
                 }
 
