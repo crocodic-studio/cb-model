@@ -4,6 +4,7 @@ use App;
 use Crocodicstudio\Cbmodel\Helpers\Helper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class MakeModel extends Command
 {
@@ -63,7 +64,7 @@ class MakeModel extends Command
         $template = file_get_contents(__DIR__.'/../Stubs/template.blade.php.stub');
         $repoTemplate = file_get_contents(__DIR__.'/../Stubs/repo_template.blade.php.stub');
         $serviceTemplate = file_get_contents(__DIR__.'/../Stubs/service_template.blade.php.stub');
-        $tableStudly = studly_case($table);
+        $tableStudly = Str::studly($table);
 
         //Assign Class name
         $template = str_replace('[className]',$tableStudly, $template);
@@ -95,10 +96,10 @@ class MakeModel extends Command
         foreach($columns as $column)
         {
             $hintClassName = null;
-            if(ends_with($column,'_id')) {
-                $hintClassName = studly_case(str_replace('_id','',$column));
-            }elseif (starts_with($column, 'id_')) {
-                $hintClassName = studly_case(str_replace('id_','',$column));
+            if(Str::endsWith($column,'_id')) {
+                $hintClassName = Str::studly(str_replace('_id','',$column));
+            }elseif (Str::startsWith($column, 'id_')) {
+                $hintClassName = Str::studly(str_replace('id_','',$column));
             }
 
             if(!class_exists("\\App\Models\\".$hintClassName)) {
@@ -106,33 +107,33 @@ class MakeModel extends Command
             }
 
             if($hintClassName) {
-                $gs .= "\tpublic static function findAllBy".studly_case($column)."(\$value) {\n";
+                $gs .= "\tpublic static function findAllBy".Str::studly($column)."(\$value) {\n";
                 $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
                 $gs .= "\t}\n\n";
 
                 $gs .= "\t/**\n";
                 $gs .= "\t* @return ".$hintClassName."\n";
                 $gs .= "\t*/\n";
-                $gs .= "\tpublic function get".studly_case($column)."() {\n";
+                $gs .= "\tpublic function get".Str::studly($column)."() {\n";
                 $gs .= "\t\treturn ".$hintClassName."::findById(\$this->".$column.");\n";
                 $gs .= "\t}\n\n";
             }else{
                 if($column != $pk) {
-                    $gs .= "\tpublic static function findAllBy".studly_case($column)."(\$value) {\n";
+                    $gs .= "\tpublic static function findAllBy".Str::studly($column)."(\$value) {\n";
                     $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
                     $gs .= "\t}\n\n";
 
-                    $gs .= "\tpublic static function findBy".studly_case($column)."(\$value) {\n";
+                    $gs .= "\tpublic static function findBy".Str::studly($column)."(\$value) {\n";
                     $gs .= "\t\treturn static::findBy('".$column."',\$value);\n";
                     $gs .= "\t}\n\n";
                 }
 
-                $gs .= "\tpublic function get".studly_case($column)."() {\n";
+                $gs .= "\tpublic function get".Str::studly($column)."() {\n";
                 $gs .= "\t\treturn \$this->".$column.";\n";
                 $gs .= "\t}\n\n";
             }
 
-            $gs .= "\tpublic function set".studly_case($column)."(\$".$column.") {\n";
+            $gs .= "\tpublic function set".Str::studly($column)."(\$".$column.") {\n";
             $gs .= "\t\t\$this->".$column." = \$".$column.";\n";
             $gs .= "\t}\n\n";
         }
