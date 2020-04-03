@@ -2,9 +2,9 @@
 namespace App\Services;
 
 use DB;
-use App\Repositories\[className]Repository;
+use App\Repositories\{class_name}Repo;
 
-class [className]Service
+class {class_name}Service
 {
     // TODO : Make you own service method
 

@@ -61,86 +61,39 @@ class MakeModel extends Command
             @mkdir($pathServices, 0755);
         }
 
+        $primary_key = Helper::findPrimaryKey($table,$connection);
+
         $template = file_get_contents(__DIR__.'/../Stubs/template.blade.php.stub');
         $repoTemplate = file_get_contents(__DIR__.'/../Stubs/repo_template.blade.php.stub');
         $serviceTemplate = file_get_contents(__DIR__.'/../Stubs/service_template.blade.php.stub');
         $tableStudly = Str::studly($table);
 
         //Assign Class name
-        $template = str_replace('[className]',$tableStudly, $template);
-        $repoTemplate = str_replace('[className]', $tableStudly, $repoTemplate);
-        $serviceTemplate = str_replace('[className]', $tableStudly, $serviceTemplate);
+        $template = str_replace('{class_name}',$tableStudly, $template);
+        $repoTemplate = str_replace('{class_name}', $tableStudly, $repoTemplate);
+        $serviceTemplate = str_replace('{class_name}', $tableStudly, $serviceTemplate);
 
         //Assign Table Name
-        $template = str_replace('[tableName]',$table, $template);
-        $repoTemplate = str_replace('[tableName]', $table, $repoTemplate);
-        $serviceTemplate = str_replace('[tableName]', $table, $serviceTemplate);
+        $template = str_replace('{table}',$table, $template);
+        $repoTemplate = str_replace('{table}', $table, $repoTemplate);
+        $serviceTemplate = str_replace('{table}', $table, $serviceTemplate);
 
-        //Assign Connection
-        $template = str_replace('[connection]', $connection, $template);
+        // Assign Primary Key
+        $template = str_replace('{primary_key}',$primary_key, $template);
 
-        //Get PK
-        $pk = Helper::findPrimaryKey($table, $connection);
+        // Assign Connection
+        $template = str_replace('{connection}', $connection, $template);
 
-        //Assign Columns Properties
+        // Assign Columns Properties
         $columns = DB::connection($connection)->getSchemaBuilder()->getColumnListing($table);
         $properties = "\n";
         foreach($columns as $column)
         {
-            $properties .= "\tprivate \$".$column.";\n";
+            $properties .= "\tpublic \$".$column.";\n";
         }
-        $template = str_replace('[properties]', $properties, $template);
-
-        //Assign getter setter
-        $gs = "\n";
-        foreach($columns as $column)
-        {
-            $hintClassName = null;
-            if(Str::endsWith($column,'_id')) {
-                $hintClassName = Str::studly(str_replace('_id','',$column));
-            }elseif (Str::startsWith($column, 'id_')) {
-                $hintClassName = Str::studly(str_replace('id_','',$column));
-            }
-
-            if(!class_exists("\\App\Models\\".$hintClassName)) {
-                $hintClassName = null;
-            }
-
-            if($hintClassName) {
-                $gs .= "\tpublic static function findAllBy".Str::studly($column)."(\$value) {\n";
-                $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
-                $gs .= "\t}\n\n";
-
-                $gs .= "\t/**\n";
-                $gs .= "\t* @return ".$hintClassName."\n";
-                $gs .= "\t*/\n";
-                $gs .= "\tpublic function get".Str::studly($column)."() {\n";
-                $gs .= "\t\treturn ".$hintClassName."::findById(\$this->".$column.");\n";
-                $gs .= "\t}\n\n";
-            }else{
-                if($column != $pk) {
-                    $gs .= "\tpublic static function findAllBy".Str::studly($column)."(\$value) {\n";
-                    $gs .= "\t\treturn static::simpleQuery()->where('".$column."',\$value)->get();\n";
-                    $gs .= "\t}\n\n";
-
-                    $gs .= "\tpublic static function findBy".Str::studly($column)."(\$value) {\n";
-                    $gs .= "\t\treturn static::findBy('".$column."',\$value);\n";
-                    $gs .= "\t}\n\n";
-                }
-
-                $gs .= "\tpublic function get".Str::studly($column)."() {\n";
-                $gs .= "\t\treturn \$this->".$column.";\n";
-                $gs .= "\t}\n\n";
-            }
-
-            $gs .= "\tpublic function set".Str::studly($column)."(\$".$column.") {\n";
-            $gs .= "\t\t\$this->".$column." = \$".$column.";\n";
-            $gs .= "\t}\n\n";
-        }
-        $template = str_replace('[getterSetter]', $gs, $template);
+        $template = str_replace('{properties}', $properties, $template);
 
         //Put the file
-
         if(!$repoName) {
             $repoName = $tableStudly;
         }

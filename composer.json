@@ -13,6 +13,10 @@
     "require": {
       "php": "~7.2|~7.3"
     },
+    "require-dev": {
+      "Illuminate/Support":"^5.7",
+      "Illuminate/Console":"^5.7"
+    },
     "autoload": {
       "psr-0": {
         "Crocodicstudio\\Cbmodel": "src/"
