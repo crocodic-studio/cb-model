@@ -129,6 +129,8 @@ class Model extends ModelAbstract
             }
         }
 
+        unset($data['table'], $data['connection'], $data['primary_key']);
+
         if($this->{$primary_key}) {
             if(isset($data['created_at'])) {
                 unset($data['created_at']);
