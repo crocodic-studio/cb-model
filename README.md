@@ -2,7 +2,7 @@
 An alternative about laravel eloquent
 
 ### Install Command
-``composer require crocodicstudio/cbmodel``
+``composer require crocodicstudio/cbmodel=^2.0``
 
 ### 1. Create a model from existing table
 ``php artisan make:cbmodel --table={the table name}``
