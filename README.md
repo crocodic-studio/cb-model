@@ -27,9 +27,9 @@ use Crocodicstudio\Cbmodel\Core\Model;
 
 class Books extends Model
 {
-    public static $tableName = "books";
-    public static $connection = "mysql";
-    public static $primary_key = "id";
+    public $tableName = "books";
+    public $connection = "mysql";
+    public $primary_key = "id";
 
     public $id;
     public $createdAt;
