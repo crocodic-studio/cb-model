@@ -1,6 +1,9 @@
 # CB Laravel Model Repository
 An alternative about laravel eloquent
 
+### Requirement
+Laravel 5.* | 6.* | 7.*
+
 ### Install Command
 ``composer require crocodicstudio/cbmodel=^2.0``
 
