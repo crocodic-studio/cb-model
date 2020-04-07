@@ -134,7 +134,7 @@ class FooController extends Controller {
 As you can see now we can get the category name by using ```->category()->name``` without any SQL Query or even Database Builder syntax. Also you can recursively go down to your relation with NO LIMIT.
 
 ### 4. How to Casting DB Builder Collection output to CB Model Class?
-You can easily cast your simple database builder collection to cb model class. Make sure that the database builder have no any join/relation operation. And only support from simple table query
+You can easily cast your simple database builder collection to cb model class.
 
 ```php 
 $row = DB::table("books")->where("id",1)->first();
