@@ -178,3 +178,79 @@ or
 ```php 
 Books::deleteById(1);
 ```
+
+## Model Method Available
+```php
+/**
+* Find all datas by specific condition.
+*/ 
+$result = FooBar::findAllBy($column, $value = null, $sorting_column = "id", $sorting_dir = "desc");
+// or 
+$result = FooBar::findAllBy(['foo'=>1,'bar'=>2]);
+
+/**
+* Count the records of table
+*/ 
+$result = FooBar::count();
+
+/**
+* Count the records with specific condition 
+*/
+$result = FooBar::countBy($column, $value = null);
+// or
+$result = FooBar::countBy(['foo'=>1,'bar'=>2]);
+
+/**
+* Find all datas and ordering the data to descending
+*/
+$result = FooBar::findAllDesc($column = "id");
+
+/**
+* Find all datas and ordering the data to ascending
+*/
+$result = FooBar::findAllAsc($column = "id");
+
+/** 
+* Find/Fetch a record by a primary key value
+*/
+$result = FooBar::findById($value);
+
+/**
+* Find a record by a specific condition
+*/
+$result = Foobar::findBy($column, $value = null);
+// or 
+$result = Foobar::findBy(['foo'=>1,'bar'=>2]);
+
+/**
+* To run the insert SQL Query
+*/
+$fooBar = new FooBar();
+$fooBar->name = "Lorem ipsum";
+$fooBar->save();
+
+/**
+* To run the update SQL Query
+*/
+$fooBar = FooBar::findById($value);
+$fooBar->name = "Lorem ipsum";
+$fooBar->save();
+
+/**
+* To delete the record by a primary key value
+*/
+FooBar::deleteById($value);
+
+/**
+* To delete the record by a specific condition
+*/
+FooBar::deleteBy($column, $value = null);
+// or
+Foobar::deleteBy(['foo'=>1,'bar'=>2]);
+
+/**
+* To delete after you fetch the record 
+*/
+$fooBar = FooBar::findById($value);
+$fooBar->delete();
+```
