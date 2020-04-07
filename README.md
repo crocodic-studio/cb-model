@@ -257,3 +257,6 @@ Foobar::deleteBy(['foo'=>1,'bar'=>2]);
 $fooBar = FooBar::findById($value);
 $fooBar->delete();
 ```
+
+## Other Useful
+1. [CRUDBooster Laravel CRUD Generator](https://github.com/crocodic-studio/crudbooster)
