@@ -15,6 +15,14 @@ class Model extends ModelAbstract
     use ModelSetter;
 
     /**
+     * Get last record id
+     * @return mixed
+     */
+    public static function lastId() {
+        return DB::table((new static())->table)->max((new static())->primary_key);
+    }
+
+    /**
      * @param array|string $column
      * @param string|null $value
      * @param string $sorting_column
@@ -99,6 +107,14 @@ class Model extends ModelAbstract
             ->where((new static())->primary_key,$id)
             ->first();
         return static::objectSetter($row);
+    }
+
+    /**
+     * @param $id
+     * @return Model
+     */
+    public static function find($id) {
+        return static::findById($id);
     }
 
     /**
