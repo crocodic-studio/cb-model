@@ -1,8 +1,11 @@
 # CB Laravel Model Repository
 An alternative about laravel eloquent
 
+### Requirement
+Laravel 5.* | 6.* | 7.*
+
 ### Install Command
-``composer require crocodicstudio/cbmodel``
+``composer require crocodicstudio/cbmodel=^2.0``
 
 ### 1. Create a model from existing table
 ``php artisan make:cbmodel --table={the table name}``
@@ -16,7 +19,7 @@ created_at (Timestamp)
 name (Varchar) 255
 ```
 
-It will auto create a new file at ```/app/CBModels/Books.php``` with the following file structure : 
+It will auto create a new file at ```/app/Models/Books.php``` with the following file structure : 
 
 ```php
 <?php
@@ -27,46 +30,18 @@ use Crocodicstudio\Cbmodel\Core\Model;
 
 class Books extends Model
 {
-    public static $tableName = "books";
+    public $tableName = "books";
+    public $connection = "mysql";
+    public $primary_key = "id";
 
-    private $id;
-    private $createdAt;
-    private $name;
-
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-    
-    public function getId()
-    {
-        return $this->id;
-    }
-    
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-    }
-    
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-    
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-    
-    public function getName()
-    {
-        return $this->name;
-    }
+    public $id;
+    public $createdAt;
+    public $name;
 }
 ```
 
 ### 2. Using CB Model class on your Controller
-Insert ```use App\CBModels\Books; ``` at top of your controller class name.
+Insert ```use App\Models\Books; ``` at top of your controller class name.
 
 ```php
 <?php 
@@ -78,7 +53,7 @@ class FooController extends Controller {
     
     public function index() 
     {
-        $books = Books::all();
+        $books = Books::findAllDesc();
         return view("books", ["bookData"=>$books]);
     }
     
@@ -93,7 +68,7 @@ class FooController extends Controller {
         $book = Books::findById($id);
         $book->delete();
         
-        return redirect()->back()->with(["message"=>"Book ".$book->getName()." has been deleted!"]);
+        return redirect()->back()->with(["message"=>"Book ".$book->name." has been deleted!"]);
     }
 }
 ?>
@@ -114,12 +89,21 @@ name (Varchar) 255
 ```
 Now you have to create a model for ```categories``` table, you can following previous steps.
 
-I assume that you have create a ```categories``` model, so make sure that now we have two files in the ```/app/CBModels/```
+I assume that you have create a ```categories``` model, so make sure that now we have two files in the ```/app/Models/```
 ``` 
 /Books.php
 /Categories.php
 ```
-Now we go back to the controller 
+Open the Books model , and add this bellow method
+```php
+    /**
+    * @return Categories
+    */
+    public function category() {
+        return Categories::findById($this->categories_id);
+    }
+```
+Then open the FooController 
 ```php
 <?php 
 namespace App\Http\Controllers;
@@ -135,10 +119,10 @@ class FooController extends Controller {
         $book = Books::findById($id);
         
         $data = [];
-        $data['book_id'] = $book->getId();
-        $data['book_name'] = $book->getName();
-        $data['book_category_id'] = $book->getCategories()->getId();
-        $data['book_category_name'] = $book->getCategories()->getName();
+        $data['book_id'] = $book->id;
+        $data['book_name'] = $book->name;
+        $data['book_category_id'] = $book->category()->id;
+        $data['book_category_name'] = $book->category()->name;
         
         return view("book_detail",$data);
     }
@@ -147,35 +131,35 @@ class FooController extends Controller {
 }
 ?>
 ```
-As you can see now we can get the category name by using ```->getCategories()->getName()``` without any SQL Query or even Database Builder syntax. Also you can recursively go down to your relation with NO LIMIT.
+As you can see now we can get the category name by using ```->category()->name``` without any SQL Query or even Database Builder syntax. Also you can recursively go down to your relation with NO LIMIT.
 
 ### 4. How to Casting DB Builder Collection output to CB Model Class?
-You can easily cast your simple database builder collection to cb model class. Make sure that the database builder have no any join/relation operation. And only support from simple table query
+You can easily cast your simple database builder collection to cb model class.
 
 ```php 
 $row = DB::table("books")->where("id",1)->first();
 
-//Cast to CBModel
+//Cast to CB Model
 $model = new Books($row);
 
 //And then you can use cb model normally
-echo $model->getName();
+echo $model->name;
 ```
 
 ### 5. How to insert the data with CB Model
 You can easily insert the data with method ```->save()``` like bellow:
 ```php 
 $book = new Books();
-$book->setCreatedAt(date("Y-m-d H:i:s")); //this createdAt is a magic method you can ignore this
-$book->setName("New Book");
-$book->setCategories(1);
+$book->created_at = date("Y-m-d H:i:s"); //this created_at is a magic method you can ignore this
+$book->name = "New Book";
+$book->categories_id = 1;
 $book->save();
 ```
 Then if you want to get the last insert id you can do like bellow:
 ```php
 ...
 $book->save();
-$lastInsertId = $book->getId();
+$lastInsertId = $book->id; // get the id from id property
 ...
 ```
 
@@ -183,16 +167,8 @@ $lastInsertId = $book->getId();
 You can easily update the data, just find it for first : 
 ```php 
 $book = Books::findById(1);
-$book->setName("New Book");
-$book->setCategories(1);
-$book->save();
-```
-or 
-```php 
-$book = new Books();
-$book->setId(1);
-$book->setName("New Book");
-$book->setCategories(1);
+$book->name = "New Book";
+$book->categories_id = 1;
 $book->save();
 ```
 ### 5. How to delete the data?
@@ -201,11 +177,86 @@ You can easily delete the data, just find it for first :
 $book = Books::findById(1);
 $book->delete();
 ```
-or 
-```php 
-Books::delete(1);
-```
 or
 ```php 
 Books::deleteById(1);
 ```
+
+## Model Method Available
+```php
+/**
+* Find all datas by specific condition.
+*/ 
+$result = FooBar::findAllBy($column, $value = null, $sorting_column = "id", $sorting_dir = "desc");
+// or 
+$result = FooBar::findAllBy(['foo'=>1,'bar'=>2]);
+
+/**
+* Count the records of table
+*/ 
+$result = FooBar::count();
+
+/**
+* Count the records with specific condition 
+*/
+$result = FooBar::countBy($column, $value = null);
+// or
+$result = FooBar::countBy(['foo'=>1,'bar'=>2]);
+
+/**
+* Find all datas and ordering the data to descending
+*/
+$result = FooBar::findAllDesc($column = "id");
+
+/**
+* Find all datas and ordering the data to ascending
+*/
+$result = FooBar::findAllAsc($column = "id");
+
+/** 
+* Find/Fetch a record by a primary key value
+*/
+$result = FooBar::findById($value);
+
+/**
+* Find a record by a specific condition
+*/
+$result = Foobar::findBy($column, $value = null);
+// or 
+$result = Foobar::findBy(['foo'=>1,'bar'=>2]);
+
+/**
+* To run the insert SQL Query
+*/
+$fooBar = new FooBar();
+$fooBar->name = "Lorem ipsum";
+$fooBar->save();
+
+/**
+* To run the update SQL Query
+*/
+$fooBar = FooBar::findById($value);
+$fooBar->name = "Lorem ipsum";
+$fooBar->save();
+
+/**
+* To delete the record by a primary key value
+*/
+FooBar::deleteById($value);
+
+/**
+* To delete the record by a specific condition
+*/
+FooBar::deleteBy($column, $value = null);
+// or
+Foobar::deleteBy(['foo'=>1,'bar'=>2]);
+
+/**
+* To delete after you fetch the record 
+*/
+$fooBar = FooBar::findById($value);
+$fooBar->delete();
+```
+
+## Other Useful
+1. [CRUDBooster Laravel CRUD Generator](https://github.com/crocodic-studio/crudbooster)
