@@ -23,6 +23,13 @@ class Model extends ModelAbstract
     }
 
     /**
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public static function table() {
+        return DB::table((new static())->table);
+    }
+
+    /**
      * @param array|string $column
      * @param string|null $value
      * @param string $sorting_column
