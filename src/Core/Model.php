@@ -141,7 +141,7 @@ class Model extends ModelAbstract
         $data = [];
         foreach($this as $key=>$val) {
             if(!in_array($key,[$primary_key])) {
-                if(!empty($val)) {
+                if(isset($this->{$key})) {
                     $data[$key] = $val;
                 }
             }
