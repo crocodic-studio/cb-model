@@ -11,7 +11,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-      "php": "~7.2|~7.3"
+      "php": "~7.2|~7.3",
+      "doctrine/dbal": "^2.10"  
     },
     "require-dev": {
       "Illuminate/Support":"^5.7",
