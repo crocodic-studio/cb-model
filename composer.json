@@ -14,18 +14,18 @@
       "php": "~7.2|~7.3"
     },
     "require-dev": {
-      "Illuminate/Support":"^5.7",
-      "Illuminate/Console":"^5.7"
+      "illuminate/support":"^5.7",
+      "illuminate/console":"^5.7"
     },
     "autoload": {
-      "psr-0": {
-        "Crocodicstudio\\Cbmodel": "src/"
+      "psr-4": {
+        "crocodicstudio\\cbmodel": "src/"
       }
     },
     "extra": {
       "laravel": {
         "providers": [
-          "Crocodicstudio\\Cbmodel\\CBModelServiceProvider"
+          "crocodicstudio\\cbmodel\\CBModelServiceProvider"
         ]
       }
     }

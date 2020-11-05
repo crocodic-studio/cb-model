@@ -6,7 +6,7 @@
  * Time: 10:11 PM
  */
 
-namespace Crocodicstudio\Cbmodel\Core;
+namespace crocodicstudio\cbmodel\Core;
 
 
 abstract class ModelAbstract

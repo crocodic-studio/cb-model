@@ -1,6 +1,6 @@
 <?php
 
-namespace Crocodicstudio\Cbmodel\Helpers;
+namespace crocodicstudio\cbmodel\Helpers;
 
 use Illuminate\Support\Facades\DB;
 

@@ -6,7 +6,7 @@
  * Time: 1:28 PM
  */
 
-namespace Crocodicstudio\Cbmodel\Core;
+namespace crocodicstudio\cbmodel\Core;
 
 use Illuminate\Support\Facades\DB;
 

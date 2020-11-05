@@ -1,6 +1,6 @@
 <?php
 
-namespace Crocodicstudio\Cbmodel\Core;
+namespace crocodicstudio\cbmodel\Core;
 
 
 class CBModelTemporary

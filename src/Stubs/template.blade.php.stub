@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use Crocodicstudio\Cbmodel\Core\Model;
+use crocodicstudio\cbmodel\Core\Model;
 
 class {class_name} extends Model
 {

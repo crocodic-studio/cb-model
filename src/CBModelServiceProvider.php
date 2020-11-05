@@ -1,5 +1,5 @@
 <?php
-namespace Crocodicstudio\Cbmodel;
+namespace crocodicstudio\cbmodel;
 
 use Crocodicstudio\Cbmodel\Core\CBModelTemporary;
 use Illuminate\Support\ServiceProvider;

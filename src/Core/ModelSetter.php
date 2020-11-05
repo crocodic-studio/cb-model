@@ -6,7 +6,7 @@
  * Time: 12:17 AM
  */
 
-namespace Crocodicstudio\Cbmodel\Core;
+namespace crocodicstudio\cbmodel\Core;
 
 trait ModelSetter
 {
