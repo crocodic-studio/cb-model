@@ -55,7 +55,12 @@ class Model extends ModelAbstract
      * @return integer
      */
     public static function count() {
-        return DB::table((new static())->table)->count();
+        $total = app("CBModelTemporary")->get(static::class, "count", (new static())->table);
+        if(!isset($total)) {
+            $total = DB::table((new static())->table)->count();
+            app("CBModelTemporary")->put(static::class, "count", (new static())->table);
+        }
+        return $total;
     }
 
     /**
@@ -97,6 +102,22 @@ class Model extends ModelAbstract
         return static::listSetter($result);
     }
 
+    /**
+     * @return static[]
+     */
+    public static function latest() {
+        $result = DB::table((new static())->table)->orderBy((new static())->primary_key,"desc")->get();
+        return static::listSetter($result);
+    }
+
+    /**
+     * @return static[]
+     */
+    public static function oldest() {
+        $result = DB::table((new static())->table)->orderBy((new static())->primary_key,"asc")->get();
+        return static::listSetter($result);
+    }
+
     public function toArray() {
         $result = [];
         foreach($this as $key=>$val) {
@@ -110,9 +131,14 @@ class Model extends ModelAbstract
      * @return static
      */
     public static function findById($id) {
-        $row = DB::table((new static())->table)
-            ->where((new static())->primary_key,$id)
-            ->first();
+        $row = app("CBModelTemporary")->get(static::class, "findById", $id);
+        if(!$row) {
+            $row = DB::table((new static())->table)
+                ->where((new static())->primary_key,$id)
+                ->first();
+            app("CBModelTemporary")->put(static::class, "findById", $id, $row);
+        }
+
         return static::objectSetter($row);
     }
 

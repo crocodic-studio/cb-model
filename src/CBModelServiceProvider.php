@@ -1,7 +1,7 @@
 <?php
 namespace crocodicstudio\cbmodel;
 
-use Crocodicstudio\Cbmodel\Core\CBModelTemporary;
+use crocodicstudio\cbmodel\Core\CBModelTemporary;
 use Illuminate\Support\ServiceProvider;
 
 class CBModelServiceProvider extends ServiceProvider
@@ -31,7 +31,7 @@ class CBModelServiceProvider extends ServiceProvider
 
         if($this->app->runningInConsole()) {
             $this->commands([
-                '\Crocodicstudio\Cbmodel\Commands\MakeModel'
+                '\crocodicstudio\cbmodel\Commands\MakeModel'
             ]);
         }
 
