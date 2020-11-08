@@ -7,7 +7,7 @@ class CBModelTemporary
 {
     private $data;
 
-    public function set($repoClassName, $repoMethodName, $repoId, $data)
+    public function put($repoClassName, $repoMethodName, $repoId, $data)
     {
         $this->data[$repoClassName][$repoMethodName][$repoId] = $data;
     }
