@@ -240,6 +240,20 @@ class Model extends ModelAbstract
         return static::objectSetter($row);
     }
 
+    /**
+     * To save insert many data
+     * @param Model[] $data
+     */
+    public static function bulkInsert(array $data) {
+        $insertData = [];
+        foreach($data as $row) {
+            /** @var Model $row */
+            $dataArray = $row->toArray();
+            $insertData[] = $dataArray;
+        }
+        DB::table((new static())->table)->insertOrIgnore($insertData);
+    }
+
     public function save() {
         $primary_key = (new static())->primary_key;
         $data = [];

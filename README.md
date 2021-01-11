@@ -276,6 +276,19 @@ $fooBar->name = "Lorem ipsum";
 $fooBar->save();
 
 /**
+* To bulk insert
+*/
+$data = [];
+$foo = new FooBar();
+$foo->name = "Lorem ipsum 1";
+array_push($data, $foo);
+$bar = new FooBar();
+$bar->name = "Lorem ipsum 2";
+array_push($data, $bar);
+FooBar::bulkInsert($data);
+
+
+/**
 * To run the update SQL Query
 */
 $fooBar = FooBar::findById($value);
