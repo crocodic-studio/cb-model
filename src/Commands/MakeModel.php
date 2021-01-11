@@ -13,7 +13,7 @@ class MakeModel extends Command
      *
      * @var string
      */
-    protected $signature = 'make:cbmodel {--table=ALL : The table name, the default is all table} {--connection=mysql : The connection database, default is mysql}';
+    protected $signature = 'create:model {table=ALL} {--connection=mysql : The connection database, default is mysql}';
 
     /**
      * The console command description.
@@ -30,7 +30,7 @@ class MakeModel extends Command
 
     public function handle()
     {
-        $table = $this->option('table');
+        $table = $this->argument("table");
         $repoName = null;
         $connection = $this->option('connection');
 

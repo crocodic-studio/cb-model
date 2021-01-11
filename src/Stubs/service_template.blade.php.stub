@@ -2,9 +2,9 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
-use App\Repositories\{class_name}Repo;
+use App\Repositories\{class_name}Repository;
 
-class {class_name}Service extends {class_name}Repo
+class {class_name}Service extends {class_name}Repository
 {
     // TODO : Make you own service method
 

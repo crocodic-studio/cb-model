@@ -7,10 +7,16 @@ Laravel 5.* | 6.* | 7.*
 ### Install Command
 ``composer require crocodicstudio/cbmodel=^2.0``
 
-### 1. Create a model from existing table
-``php artisan make:cbmodel --table={the table name}``
+### 1. Create a model
 
-If you want to generate All your table you can ignore the <code>--table</code> option.
+*Create a model from a table*<br/>
+``php artisan create:model foo_bar_table``
+
+*Create model for all tables*<br/>
+``php artisan create:model``
+
+*Create a model with other connection*<br/>
+``php artisan create:model foo_bar_table --connection=con2``
 
 I assume that you have a ```books``` table with the structure like bellow:
 ```
@@ -35,7 +41,7 @@ class Books extends Model
     public $primary_key = "id";
 
     public $id;
-    public $createdAt;
+    public $created_at;
     public $name;
 }
 ```
@@ -53,20 +59,19 @@ class FooController extends Controller {
     
     public function index() 
     {
-        $books = Books::findAllDesc();
+        $books = Books::latest();
         return view("books", ["bookData"=>$books]);
     }
     
     public function detail($id)
     {
-        $book = Books::findById($id);
+        $book = Books::find($id);
         return view("book_detail", ["book"=>$book]);
     }
     
     public function delete($id)
     {
-        $book = Books::findById($id);
-        $book->delete();
+        Books::deleteById($id);
         
         return redirect()->back()->with(["message"=>"Book ".$book->name." has been deleted!"]);
     }
@@ -100,7 +105,15 @@ Open the Books model , and add this bellow method
     * @return Categories
     */
     public function category() {
-        return Categories::findById($this->categories_id);
+        return $this->belongsTo("App\Models\Categories");
+    }
+
+    // or 
+    /**
+    * @return Categories
+    */
+    public function category() {
+        return Categories::find($this->categories_id);
     }
 ```
 Then open the FooController 
@@ -116,7 +129,7 @@ class FooController extends Controller {
     
     public function detail($id)
     {
-        $book = Books::findById($id);
+        $book = Books::find($id);
         
         $data = [];
         $data['book_id'] = $book->id;
@@ -127,7 +140,6 @@ class FooController extends Controller {
         return view("book_detail",$data);
     }
     
-    ...
 }
 ?>
 ```
@@ -185,11 +197,16 @@ Books::deleteById(1);
 ## Model Method Available
 ```php
 /**
-* Find all datas by specific condition.
+* Find all data by specific condition.
 */ 
 $result = FooBar::findAllBy($column, $value = null, $sorting_column = "id", $sorting_dir = "desc");
 // or 
 $result = FooBar::findAllBy(['foo'=>1,'bar'=>2]);
+
+/**
+* Find all data without sorting
+*/
+$result = FooBar::findAll();
 
 /**
 * Count the records of table
@@ -207,16 +224,42 @@ $result = FooBar::countBy(['foo'=>1,'bar'=>2]);
 * Find all datas and ordering the data to descending
 */
 $result = FooBar::findAllDesc($column = "id");
+// or simply
+$result = FooBar::latest();
 
 /**
 * Find all datas and ordering the data to ascending
 */
 $result = FooBar::findAllAsc($column = "id");
+// or simply
+$result = FooBar::oldest();
 
 /** 
 * Find/Fetch a record by a primary key value
 */
-$result = FooBar::findById($value);
+$result = FooBar::findById($id);
+// or simply
+$result = FooBar::find($id);
+
+/**
+* Create a custom query, and result laravel Query Builder collection
+*/
+$result = FooBar::table()->where("foo",1)->first();
+
+/**
+* Create a custom query and casting to model object
+*/
+$result = FooBar::query(function($query) {
+    return $query->where("bar",1);
+});
+
+/**
+* Create a custom list query and casting them to model objects
+*/
+$result = FooBar::queryList(function($query) {
+    return $query->where("bar",1);
+});
+
 
 /**
 * Find a record by a specific condition
@@ -256,6 +299,52 @@ Foobar::deleteBy(['foo'=>1,'bar'=>2]);
 */
 $fooBar = FooBar::findById($value);
 $fooBar->delete();
+```
+
+## A One-To-Many Relationship
+```php
+class Posts extends Model {
+    // etc
+    
+    /**
+    * @return App\Models\Comments[]
+    */
+    public function comments() {
+        return $this->hasMany(Comments::class);
+    }
+    
+    // or with full option
+    /**
+    * @return App\Models\Comments[]
+    */
+    public function comments() {
+        return $this->hasMany(Comments::class, "foreign_key", "local_key", function($condition) {
+            return $condition->where("status","Active");
+        });
+    }
+}
+```
+
+## A One-To-One Relationship
+```php
+class Comments extends Model {
+    // etc
+    
+    /**
+    * @return App\Models\Posts
+    */
+    public function post() {
+        return $this->belongsTo(Posts::class);
+    }
+    
+    // or with full option
+    /**
+    * @return App\Models\Posts
+    */
+    public function post() {
+        return $this->belongsTo(Posts::class, "foreign_key", "local_key");
+    }
+}
 ```
 
 ## Other Useful

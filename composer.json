@@ -12,11 +12,12 @@
     "minimum-stability": "dev",
     "require": {
       "php": "~7.2|~7.3",
-      "doctrine/dbal": "^2.10"  
+      "doctrine/dbal": "^2.10",
+      "illuminate/support":"^5.7|^6.0|^7.0",
+      "illuminate/console":"^5.7|^6.0|^7.0"
     },
     "require-dev": {
-      "illuminate/support":"^5.7",
-      "illuminate/console":"^5.7"
+
     },
     "autoload": {
       "psr-4": {

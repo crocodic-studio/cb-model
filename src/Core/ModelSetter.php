@@ -11,6 +11,10 @@ namespace crocodicstudio\cbmodel\Core;
 trait ModelSetter
 {
 
+    /**
+     * ModelSetter constructor.
+     * @param null $row
+     */
     public function __construct($row = null)
     {
         if($row) {

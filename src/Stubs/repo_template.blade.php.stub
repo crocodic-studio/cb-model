@@ -3,7 +3,7 @@ namespace App\Repositories;
 
 use App\Models\{class_name};
 
-class {class_name}Repo extends {class_name}
+class {class_name}Repository extends {class_name}
 {
     // TODO : Make you own query methods
 

@@ -23,10 +23,67 @@ class Model extends ModelAbstract
     }
 
     /**
+     * A one-to-many relationship
+     * @param string $modelName Parent model class name
+     * @param string|null $foreignKey
+     * @param string|null $localKey
+     * @param callable|null $condition Add condition with Builder Query
+     * @return mixed
+     */
+    public function hasMany(string $modelName, string $foreignKey = null, string $localKey = null, callable $condition = null) {
+        $childModel = new $modelName();
+        $parentModel = new static();
+        $foreignKey = ($foreignKey) ? $foreignKey : $parentModel->table."_".$parentModel->primary_key;
+        $localKey = ($localKey) ? $localKey : $parentModel->primary_key;
+        $localKey = $this->$localKey;
+        return $childModel::queryList(function($query) use ($foreignKey, $localKey, $condition) {
+            $query = $query->where($foreignKey, $localKey);
+            if(isset($condition) && is_callable($condition)) $query = call_user_func($condition, $query);
+            return $query;
+        });
+    }
+
+    /**
+     * A one-to-one relationship
+     * @param string $modelName
+     * @param string|null $foreignKey
+     * @param string|null $localKey
+     * @return mixed
+     */
+    public function belongsTo(string $modelName, string $foreignKey = null, string $localKey = null) {
+        $childModel = new $modelName();
+        $parentModel = new static();
+        $foreignKey = ($foreignKey) ? $foreignKey : $parentModel->table."_".$parentModel->primary_key;
+        $localKey = ($localKey) ? $localKey : $parentModel->primary_key;
+        $localKey = $this->$localKey;
+        return $childModel::query(function($query) use ($foreignKey, $localKey) {
+            return $query->where($foreignKey, $localKey);
+        });
+    }
+
+    /**
      * @return \Illuminate\Database\Query\Builder
      */
     public static function table() {
         return DB::table((new static())->table);
+    }
+
+    /**
+     * @param callable $query
+     * @return static
+     */
+    public static function query(callable $query) {
+        $query = call_user_func($query, static::table());
+        return static::objectSetter($query->first());
+    }
+
+    /**
+     * @param callable $query
+     * @return static[]
+     */
+    public static function queryList(callable $query) {
+        $query = call_user_func($query, static::table());
+        return static::listSetter($query->get());
     }
 
     /**
@@ -103,6 +160,20 @@ class Model extends ModelAbstract
     }
 
     /**
+     * @param callable|null $query Query Builder
+     * @return static[]
+     */
+    public static function findAll(callable $query = null) {
+        if(is_callable($query)) {
+            $result = call_user_func($query, static::table());
+            $result = $result->get();
+        } else {
+            $result = static::table()->get();
+        }
+        return static::listSetter($result);
+    }
+
+    /**
      * @return static[]
      */
     public static function latest() {
@@ -144,7 +215,7 @@ class Model extends ModelAbstract
 
     /**
      * @param $id
-     * @return Model
+     * @return static
      */
     public static function find($id) {
         return static::findById($id);
@@ -199,10 +270,17 @@ class Model extends ModelAbstract
         return ($id)?true:false;
     }
 
+    /**
+     * @param $id
+     */
     public static function deleteById($id) {
         DB::table((new static())->table)->where((new static())->primary_key,$id)->delete();
     }
 
+    /**
+     * @param string|array $column
+     * @param null $value
+     */
     public static function deleteBy($column, $value = null) {
         if(is_array($column)) {
             $result = DB::table((new static())->table);
@@ -220,7 +298,7 @@ class Model extends ModelAbstract
     }
 
     public function delete() {
-        DB::table((new static())->table)->where((new static())->primary_key, $this->id)->delete();
+        DB::table((new static())->table)->where((new static())->primary_key, $this->{$primary_key})->delete();
     }
 
 }
