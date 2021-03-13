@@ -1,6 +1,9 @@
 # CB Laravel Model Repository
 An alternative about laravel eloquent
 
+## This Package Is Deprecated
+Please use https://github.com/crocodic-studio/laravel-model
+
 ### Requirement
 Laravel 5.* | 6.* | 7.*
 
